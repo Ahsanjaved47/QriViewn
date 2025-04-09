@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:task_1/constants/const.dart';
-import 'global_history_list.dart';
+import '../database/database.dart';
 
 class GoogleMapScreen extends StatefulWidget {
   final Set<Marker>? markers;
@@ -21,6 +21,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   final TextEditingController _searchController = TextEditingController();
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
+  final db = AppDatabase();
+
 
   @override
   void initState() {
@@ -126,39 +128,44 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     }
   }
 
+
+
+
   void _showInputDialog() {
     String inputTitle = '';
 
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Enter Title'),
-          content: TextField(
-            onChanged: (value) => inputTitle = value,
-            decoration: const InputDecoration(hintText: 'Input name'),
+      builder: (context) => AlertDialog(
+        title: const Text('Enter Title'),
+        content: TextField(
+          onChanged: (value) => inputTitle = value,
+          decoration: const InputDecoration(hintText: 'Input name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              if (inputTitle.isNotEmpty && _markers.isNotEmpty && _currentPosition != null) {
+                String markersString = _markers
+                    .map((marker) => '${marker.position.latitude},${marker.position.longitude}')
+                    .join(';');
+
+                await db.into(db.historyItems).insert(
+                  HistoryItemsCompanion.insert(
+                    title: inputTitle,
+                    currentPosition: '${_currentPosition!.latitude},${_currentPosition!.longitude}',
+                    markers: markersString,
+                  ),
+                );
+
+                Navigator.pop(context);
+                Navigator.pop(context, true);
+              }
+            },
+            child: const Text('Save'),
           ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                if (inputTitle.isNotEmpty && _markers.isNotEmpty && _currentPosition != null) {
-                  String markersString = _markers.map((marker) {
-                    return '${marker.position.latitude},${marker.position.longitude}';
-                  }).join(';');
-
-                  globalHistoryList.add('$inputTitle|${_currentPosition!.latitude},${_currentPosition!.longitude}|$markersString');
-
-                  debugPrint('Updated globalHistoryList: $globalHistoryList');
-
-                  Navigator.pop(context);
-                  Navigator.pop(context, globalHistoryList);
-                }
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 

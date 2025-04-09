@@ -1,81 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:task_1/constants/const.dart';
+import '../database/database.dart';
 import 'google_maps.dart';
-import 'global_history_list.dart';
 
 class HistoryScreen extends StatefulWidget {
-  final String? name;
-  final List<String> historyList;
-
-  const HistoryScreen({super.key, this.name, required this.historyList});
+  const HistoryScreen({super.key});
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  final List<Map<String, dynamic>> _historyItems = [];
+  final db = AppDatabase();
+  List<HistoryItem> _historyItems = [];
 
   @override
   void initState() {
     super.initState();
-    debugPrint('Received historyList in HistoryScreen: ${widget.historyList}');
-    _loadSavedMarkers();
+    _loadHistory();
   }
 
-  void _loadSavedMarkers() {
-    debugPrint('Loading saved markers...');
-    debugPrint('History List: ${widget.historyList}');
-
-    for (var item in widget.historyList) {
-      debugPrint('Processing item: $item');
-
-      List<String> parts = item.split('|');
-      if (parts.length >= 3) {
-        String title = parts[0];
-        String currentPosition = parts[1];
-        List<String> markers = parts[2].split(';');
-
-        List<Map<String, double>> markerPositions = [];
-        for (var marker in markers) {
-          List<String> coords = marker.split(',');
-          if (coords.length == 2) {
-            double lat = double.tryParse(coords[0]) ?? 0.0;
-            double long = double.tryParse(coords[1]) ?? 0.0;
-            markerPositions.add({'lat': lat, 'long': long});
-          }
-        }
-
-        debugPrint('Parsed Data - Title: $title, Current Position: $currentPosition, Markers: $markerPositions');
-
-        _addHistoryItem(title, currentPosition, markerPositions);
-      } else {
-        debugPrint('Invalid item format: $item');
-      }
-    }
+  Future<void> _loadHistory() async {
+    final items = await db.select(db.historyItems).get();
+    setState(() => _historyItems = items);
   }
 
-  void _addHistoryItem(String title, String currentPosition, List<Map<String, double>> markerPositions) {
-    setState(() {
-      _historyItems.add({
-        'title': title,
-        'currentPosition': currentPosition,
-        'markers': markerPositions,
-      });
-    });
+  Future<void> _deleteItem(int id) async {
+    await (db.delete(db.historyItems)..where((t) => t.id.equals(id))).go();
+    await _loadHistory();
   }
 
-  void _deleteHistoryItem(int index) {
-    setState(() {
-
-      _historyItems.removeAt(index);
-
-
-      globalHistoryList.removeAt(index);
-
-      debugPrint('Updated globalHistoryList after deletion: $globalHistoryList');
-    });
+  Set<Marker> _parseMarkers(String markersString) {
+    return markersString.split(';').map((coord) {
+      final latLng = coord.split(',');
+      return Marker(
+        markerId: MarkerId('marker_${latLng[0]}_${latLng[1]}'),
+        position: LatLng(
+          double.parse(latLng[0]),
+          double.parse(latLng[1]),
+        ),
+      );
+    }).toSet();
   }
 
   @override
@@ -91,7 +56,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
         itemCount: _historyItems.length,
         itemBuilder: (context, index) {
           final item = _historyItems[index];
-
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             color: const Color(0xFF004D60),
@@ -103,48 +67,38 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
-                    item['title'],
-                    style: KTitleStyle
+                    item.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 8),
-
-
                   Text(
-                    'Current Position: ${item['currentPosition']}',
-                    style: KCurrentLocationStyle,
+                    'Current Position: ${item.currentPosition}',
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 8),
-
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-
                       IconButton(
-                        icon: KDeleteButtonStyle,
-                        onPressed: () => _deleteHistoryItem(index),
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteItem(item.id),
                       ),
-
-
                       IconButton(
-                        icon: KMapButtonStyle,
+                        icon: const Icon(Icons.map, color: Colors.green),
                         onPressed: () {
-                          Set<Marker> markers = {};
-                          for (var marker in item['markers']) {
-                            markers.add(
-                              Marker(
-                                markerId: MarkerId('${marker['lat']}_${marker['long']}'),
-                                position: LatLng(marker['lat']!, marker['long']!),
-                              ),
-                            );
-                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => GoogleMapScreen(
-                                markers: markers,
+                              builder: (ctx) => GoogleMapScreen(
+                                markers: _parseMarkers(item.markers),
                               ),
                             ),
                           );
@@ -165,16 +119,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
             MaterialPageRoute(
               builder: (context) => const GoogleMapScreen(),
             ),
-          ).then((value) {
-            if (value != null) {
-
-              setState(() {
-                _loadSavedMarkers();
-              });
-            }
-          });
+          ).then((_) => _loadHistory());
         },
-        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF017373),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

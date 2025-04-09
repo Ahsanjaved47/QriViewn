@@ -1,14 +1,14 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'database.dart';
 
 // ignore_for_file: type=lint
-
-class $LocationsTable extends Locations
-    with TableInfo<$LocationsTable, LocationData> {
+class $HistoryItemsTable extends HistoryItems
+    with TableInfo<$HistoryItemsTable, HistoryItem> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $LocationsTable(this.attachedDatabase, [this._alias]);
+  $HistoryItemsTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
@@ -18,45 +18,57 @@ class $LocationsTable extends Locations
       requiredDuringInsert: false,
       defaultConstraints:
           GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
   @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-      'name', aliasedName, false,
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+      'title', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _coordinatesMeta =
-      const VerificationMeta('coordinates');
+  static const VerificationMeta _currentPositionMeta =
+      const VerificationMeta('currentPosition');
   @override
-  late final GeneratedColumn<String> coordinates = GeneratedColumn<String>(
-      'coordinates', aliasedName, false,
+  late final GeneratedColumn<String> currentPosition = GeneratedColumn<String>(
+      'current_position', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _markersMeta =
+      const VerificationMeta('markers');
+  @override
+  late final GeneratedColumn<String> markers = GeneratedColumn<String>(
+      'markers', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, name, coordinates];
+  List<GeneratedColumn> get $columns => [id, title, currentPosition, markers];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'locations';
+  static const String $name = 'history_items';
   @override
-  VerificationContext validateIntegrity(Insertable<LocationData> instance,
+  VerificationContext validateIntegrity(Insertable<HistoryItem> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
     }
-    if (data.containsKey('name')) {
+    if (data.containsKey('title')) {
       context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
+          _titleMeta, title.isAcceptableOrUnknown(data['title']!, _titleMeta));
     } else if (isInserting) {
-      context.missing(_nameMeta);
+      context.missing(_titleMeta);
     }
-    if (data.containsKey('coordinates')) {
+    if (data.containsKey('current_position')) {
       context.handle(
-          _coordinatesMeta,
-          coordinates.isAcceptableOrUnknown(
-              data['coordinates']!, _coordinatesMeta));
+          _currentPositionMeta,
+          currentPosition.isAcceptableOrUnknown(
+              data['current_position']!, _currentPositionMeta));
     } else if (isInserting) {
-      context.missing(_coordinatesMeta);
+      context.missing(_currentPositionMeta);
+    }
+    if (data.containsKey('markers')) {
+      context.handle(_markersMeta,
+          markers.isAcceptableOrUnknown(data['markers']!, _markersMeta));
+    } else if (isInserting) {
+      context.missing(_markersMeta);
     }
     return context;
   }
@@ -64,54 +76,63 @@ class $LocationsTable extends Locations
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  LocationData map(Map<String, dynamic> data, {String? tablePrefix}) {
+  HistoryItem map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return LocationData(
+    return HistoryItem(
       id: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
-      name: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      coordinates: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}coordinates'])!,
+      title: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}title'])!,
+      currentPosition: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}current_position'])!,
+      markers: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}markers'])!,
     );
   }
 
   @override
-  $LocationsTable createAlias(String alias) {
-    return $LocationsTable(attachedDatabase, alias);
+  $HistoryItemsTable createAlias(String alias) {
+    return $HistoryItemsTable(attachedDatabase, alias);
   }
 }
 
-class LocationData extends DataClass implements Insertable<LocationData> {
+class HistoryItem extends DataClass implements Insertable<HistoryItem> {
   final int id;
-  final String name;
-  final String coordinates;
-  const LocationData(
-      {required this.id, required this.name, required this.coordinates});
+  final String title;
+  final String currentPosition;
+  final String markers;
+  const HistoryItem(
+      {required this.id,
+      required this.title,
+      required this.currentPosition,
+      required this.markers});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
-    map['name'] = Variable<String>(name);
-    map['coordinates'] = Variable<String>(coordinates);
+    map['title'] = Variable<String>(title);
+    map['current_position'] = Variable<String>(currentPosition);
+    map['markers'] = Variable<String>(markers);
     return map;
   }
 
-  LocationsCompanion toCompanion(bool nullToAbsent) {
-    return LocationsCompanion(
+  HistoryItemsCompanion toCompanion(bool nullToAbsent) {
+    return HistoryItemsCompanion(
       id: Value(id),
-      name: Value(name),
-      coordinates: Value(coordinates),
+      title: Value(title),
+      currentPosition: Value(currentPosition),
+      markers: Value(markers),
     );
   }
 
-  factory LocationData.fromJson(Map<String, dynamic> json,
+  factory HistoryItem.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return LocationData(
+    return HistoryItem(
       id: serializer.fromJson<int>(json['id']),
-      name: serializer.fromJson<String>(json['name']),
-      coordinates: serializer.fromJson<String>(json['coordinates']),
+      title: serializer.fromJson<String>(json['title']),
+      currentPosition: serializer.fromJson<String>(json['currentPosition']),
+      markers: serializer.fromJson<String>(json['markers']),
     );
   }
   @override
@@ -119,80 +140,97 @@ class LocationData extends DataClass implements Insertable<LocationData> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'name': serializer.toJson<String>(name),
-      'coordinates': serializer.toJson<String>(coordinates),
+      'title': serializer.toJson<String>(title),
+      'currentPosition': serializer.toJson<String>(currentPosition),
+      'markers': serializer.toJson<String>(markers),
     };
   }
 
-  LocationData copyWith({int? id, String? name, String? coordinates}) =>
-      LocationData(
+  HistoryItem copyWith(
+          {int? id, String? title, String? currentPosition, String? markers}) =>
+      HistoryItem(
         id: id ?? this.id,
-        name: name ?? this.name,
-        coordinates: coordinates ?? this.coordinates,
+        title: title ?? this.title,
+        currentPosition: currentPosition ?? this.currentPosition,
+        markers: markers ?? this.markers,
       );
-  LocationData copyWithCompanion(LocationsCompanion data) {
-    return LocationData(
+  HistoryItem copyWithCompanion(HistoryItemsCompanion data) {
+    return HistoryItem(
       id: data.id.present ? data.id.value : this.id,
-      name: data.name.present ? data.name.value : this.name,
-      coordinates:
-          data.coordinates.present ? data.coordinates.value : this.coordinates,
+      title: data.title.present ? data.title.value : this.title,
+      currentPosition: data.currentPosition.present
+          ? data.currentPosition.value
+          : this.currentPosition,
+      markers: data.markers.present ? data.markers.value : this.markers,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('LocationData(')
+    return (StringBuffer('HistoryItem(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('coordinates: $coordinates')
+          ..write('title: $title, ')
+          ..write('currentPosition: $currentPosition, ')
+          ..write('markers: $markers')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, coordinates);
+  int get hashCode => Object.hash(id, title, currentPosition, markers);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is LocationData &&
+      (other is HistoryItem &&
           other.id == this.id &&
-          other.name == this.name &&
-          other.coordinates == this.coordinates);
+          other.title == this.title &&
+          other.currentPosition == this.currentPosition &&
+          other.markers == this.markers);
 }
 
-class LocationsCompanion extends UpdateCompanion<LocationData> {
+class HistoryItemsCompanion extends UpdateCompanion<HistoryItem> {
   final Value<int> id;
-  final Value<String> name;
-  final Value<String> coordinates;
-  const LocationsCompanion({
+  final Value<String> title;
+  final Value<String> currentPosition;
+  final Value<String> markers;
+  const HistoryItemsCompanion({
     this.id = const Value.absent(),
-    this.name = const Value.absent(),
-    this.coordinates = const Value.absent(),
+    this.title = const Value.absent(),
+    this.currentPosition = const Value.absent(),
+    this.markers = const Value.absent(),
   });
-  LocationsCompanion.insert({
+  HistoryItemsCompanion.insert({
     this.id = const Value.absent(),
-    required String name,
-    required String coordinates,
-  })  : name = Value(name),
-        coordinates = Value(coordinates);
-  static Insertable<LocationData> custom({
+    required String title,
+    required String currentPosition,
+    required String markers,
+  })  : title = Value(title),
+        currentPosition = Value(currentPosition),
+        markers = Value(markers);
+  static Insertable<HistoryItem> custom({
     Expression<int>? id,
-    Expression<String>? name,
-    Expression<String>? coordinates,
+    Expression<String>? title,
+    Expression<String>? currentPosition,
+    Expression<String>? markers,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (name != null) 'name': name,
-      if (coordinates != null) 'coordinates': coordinates,
+      if (title != null) 'title': title,
+      if (currentPosition != null) 'current_position': currentPosition,
+      if (markers != null) 'markers': markers,
     });
   }
 
-  LocationsCompanion copyWith(
-      {Value<int>? id, Value<String>? name, Value<String>? coordinates}) {
-    return LocationsCompanion(
+  HistoryItemsCompanion copyWith(
+      {Value<int>? id,
+      Value<String>? title,
+      Value<String>? currentPosition,
+      Value<String>? markers}) {
+    return HistoryItemsCompanion(
       id: id ?? this.id,
-      name: name ?? this.name,
-      coordinates: coordinates ?? this.coordinates,
+      title: title ?? this.title,
+      currentPosition: currentPosition ?? this.currentPosition,
+      markers: markers ?? this.markers,
     );
   }
 
@@ -202,21 +240,25 @@ class LocationsCompanion extends UpdateCompanion<LocationData> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
     }
-    if (coordinates.present) {
-      map['coordinates'] = Variable<String>(coordinates.value);
+    if (currentPosition.present) {
+      map['current_position'] = Variable<String>(currentPosition.value);
+    }
+    if (markers.present) {
+      map['markers'] = Variable<String>(markers.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('LocationsCompanion(')
+    return (StringBuffer('HistoryItemsCompanion(')
           ..write('id: $id, ')
-          ..write('name: $name, ')
-          ..write('coordinates: $coordinates')
+          ..write('title: $title, ')
+          ..write('currentPosition: $currentPosition, ')
+          ..write('markers: $markers')
           ..write(')'))
         .toString();
   }
@@ -225,28 +267,32 @@ class LocationsCompanion extends UpdateCompanion<LocationData> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $LocationsTable locations = $LocationsTable(this);
+  late final $HistoryItemsTable historyItems = $HistoryItemsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [locations];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [historyItems];
 }
 
-typedef $$LocationsTableCreateCompanionBuilder = LocationsCompanion Function({
+typedef $$HistoryItemsTableCreateCompanionBuilder = HistoryItemsCompanion
+    Function({
   Value<int> id,
-  required String name,
-  required String coordinates,
+  required String title,
+  required String currentPosition,
+  required String markers,
 });
-typedef $$LocationsTableUpdateCompanionBuilder = LocationsCompanion Function({
+typedef $$HistoryItemsTableUpdateCompanionBuilder = HistoryItemsCompanion
+    Function({
   Value<int> id,
-  Value<String> name,
-  Value<String> coordinates,
+  Value<String> title,
+  Value<String> currentPosition,
+  Value<String> markers,
 });
 
-class $$LocationsTableFilterComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
-  $$LocationsTableFilterComposer({
+class $$HistoryItemsTableFilterComposer
+    extends Composer<_$AppDatabase, $HistoryItemsTable> {
+  $$HistoryItemsTableFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -256,16 +302,20 @@ class $$LocationsTableFilterComposer
   ColumnFilters<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get coordinates => $composableBuilder(
-      column: $table.coordinates, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get currentPosition => $composableBuilder(
+      column: $table.currentPosition,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get markers => $composableBuilder(
+      column: $table.markers, builder: (column) => ColumnFilters(column));
 }
 
-class $$LocationsTableOrderingComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
-  $$LocationsTableOrderingComposer({
+class $$HistoryItemsTableOrderingComposer
+    extends Composer<_$AppDatabase, $HistoryItemsTable> {
+  $$HistoryItemsTableOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -275,16 +325,20 @@ class $$LocationsTableOrderingComposer
   ColumnOrderings<int> get id => $composableBuilder(
       column: $table.id, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get name => $composableBuilder(
-      column: $table.name, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get title => $composableBuilder(
+      column: $table.title, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get coordinates => $composableBuilder(
-      column: $table.coordinates, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get currentPosition => $composableBuilder(
+      column: $table.currentPosition,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get markers => $composableBuilder(
+      column: $table.markers, builder: (column) => ColumnOrderings(column));
 }
 
-class $$LocationsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $LocationsTable> {
-  $$LocationsTableAnnotationComposer({
+class $$HistoryItemsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $HistoryItemsTable> {
+  $$HistoryItemsTableAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
@@ -294,57 +348,64 @@ class $$LocationsTableAnnotationComposer
   GeneratedColumn<int> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
 
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get coordinates => $composableBuilder(
-      column: $table.coordinates, builder: (column) => column);
+  GeneratedColumn<String> get currentPosition => $composableBuilder(
+      column: $table.currentPosition, builder: (column) => column);
+
+  GeneratedColumn<String> get markers =>
+      $composableBuilder(column: $table.markers, builder: (column) => column);
 }
 
-class $$LocationsTableTableManager extends RootTableManager<
+class $$HistoryItemsTableTableManager extends RootTableManager<
     _$AppDatabase,
-    $LocationsTable,
-    LocationData,
-    $$LocationsTableFilterComposer,
-    $$LocationsTableOrderingComposer,
-    $$LocationsTableAnnotationComposer,
-    $$LocationsTableCreateCompanionBuilder,
-    $$LocationsTableUpdateCompanionBuilder,
+    $HistoryItemsTable,
+    HistoryItem,
+    $$HistoryItemsTableFilterComposer,
+    $$HistoryItemsTableOrderingComposer,
+    $$HistoryItemsTableAnnotationComposer,
+    $$HistoryItemsTableCreateCompanionBuilder,
+    $$HistoryItemsTableUpdateCompanionBuilder,
     (
-      LocationData,
-      BaseReferences<_$AppDatabase, $LocationsTable, LocationData>
+      HistoryItem,
+      BaseReferences<_$AppDatabase, $HistoryItemsTable, HistoryItem>
     ),
-    LocationData,
+    HistoryItem,
     PrefetchHooks Function()> {
-  $$LocationsTableTableManager(_$AppDatabase db, $LocationsTable table)
+  $$HistoryItemsTableTableManager(_$AppDatabase db, $HistoryItemsTable table)
       : super(TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$LocationsTableFilterComposer($db: db, $table: table),
+              $$HistoryItemsTableFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$LocationsTableOrderingComposer($db: db, $table: table),
+              $$HistoryItemsTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$LocationsTableAnnotationComposer($db: db, $table: table),
+              $$HistoryItemsTableAnnotationComposer($db: db, $table: table),
           updateCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String> coordinates = const Value.absent(),
+            Value<String> title = const Value.absent(),
+            Value<String> currentPosition = const Value.absent(),
+            Value<String> markers = const Value.absent(),
           }) =>
-              LocationsCompanion(
+              HistoryItemsCompanion(
             id: id,
-            name: name,
-            coordinates: coordinates,
+            title: title,
+            currentPosition: currentPosition,
+            markers: markers,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
-            required String name,
-            required String coordinates,
+            required String title,
+            required String currentPosition,
+            required String markers,
           }) =>
-              LocationsCompanion.insert(
+              HistoryItemsCompanion.insert(
             id: id,
-            name: name,
-            coordinates: coordinates,
+            title: title,
+            currentPosition: currentPosition,
+            markers: markers,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -353,25 +414,25 @@ class $$LocationsTableTableManager extends RootTableManager<
         ));
 }
 
-typedef $$LocationsTableProcessedTableManager = ProcessedTableManager<
+typedef $$HistoryItemsTableProcessedTableManager = ProcessedTableManager<
     _$AppDatabase,
-    $LocationsTable,
-    LocationData,
-    $$LocationsTableFilterComposer,
-    $$LocationsTableOrderingComposer,
-    $$LocationsTableAnnotationComposer,
-    $$LocationsTableCreateCompanionBuilder,
-    $$LocationsTableUpdateCompanionBuilder,
+    $HistoryItemsTable,
+    HistoryItem,
+    $$HistoryItemsTableFilterComposer,
+    $$HistoryItemsTableOrderingComposer,
+    $$HistoryItemsTableAnnotationComposer,
+    $$HistoryItemsTableCreateCompanionBuilder,
+    $$HistoryItemsTableUpdateCompanionBuilder,
     (
-      LocationData,
-      BaseReferences<_$AppDatabase, $LocationsTable, LocationData>
+      HistoryItem,
+      BaseReferences<_$AppDatabase, $HistoryItemsTable, HistoryItem>
     ),
-    LocationData,
+    HistoryItem,
     PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$LocationsTableTableManager get locations =>
-      $$LocationsTableTableManager(_db, _db.locations);
+  $$HistoryItemsTableTableManager get historyItems =>
+      $$HistoryItemsTableTableManager(_db, _db.historyItems);
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:task_1/database/database.dart';
 import 'google_maps.dart';
 import 'history_screen.dart';
-import 'global_history_list.dart';
+import 'package:flutter/services.dart';
 
 class QrAppScreen extends StatefulWidget {
   const QrAppScreen({super.key});
@@ -16,6 +17,7 @@ class _QrAppScreenState extends State<QrAppScreen> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
   String scannedData = '';
+  final db = AppDatabase();
 
   @override
   void dispose() {
@@ -36,11 +38,16 @@ class _QrAppScreenState extends State<QrAppScreen> {
     });
   }
 
-  void _saveToHistory(String data) {
+  void _saveToHistory(String data) async {
     if (data.isNotEmpty) {
-      setState(() {
-        globalHistoryList.add(data);
-      });
+      await db.into(db.historyItems).insert(
+        HistoryItemsCompanion.insert(
+          title: 'QR Scan',
+          currentPosition: '0,0',
+          markers: data,
+        ),
+      );
+      setState(() {});
     }
   }
 
@@ -211,27 +218,30 @@ class _QrAppScreenState extends State<QrAppScreen> {
               child: Column(
                 children: [
                   _buildDrawerTile("Tutorials"),
-                  _buildDrawerTile("List Detail", onTap: () {
+                  _buildDrawerTile("Google Map", onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const GoogleMapScreen()));
                   }),
                   _buildDrawerTile("Settings"),
                   _buildDrawerTile("Rate this app"),
                   _buildDrawerTile("History", onTap: () {
-                    debugPrint('Passing historyList to HistoryScreen: $globalHistoryList');
+                    debugPrint('Passing historyList to HistoryScreen: $AppDatabase');
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => HistoryScreen(historyList: globalHistoryList),
+                        builder: (context) => const HistoryScreen(),
                       ),
                     );
-                  }),
+                  }
+                  ),
                 ],
               ),
             ),
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  SystemNavigator.pop();
+                },
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
